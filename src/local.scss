@@ -1,0 +1,101 @@
+.msu-ctn {
+  .drop-area {
+    height: 100%;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    .or {
+      color: #888;
+      margin: 7px 0 15px;
+      text-transform: uppercase;
+    }
+
+    &.no-support {
+      .lbl,
+      .or {
+        display: none;
+      }
+    }
+
+    &.highlight {
+      border: 2px dashed #666;
+      border-radius: 6px;
+
+      & > * {
+        display: none;
+      }
+
+      &::before {
+        content: attr(data-help);
+        font-size: 30px;
+      }
+    }
+  }
+
+  .file-btn {
+    position: relative;
+    overflow: hidden;
+
+    input {
+      position: absolute;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      font-size: 1000px;
+      cursor: pointer;
+    }
+  }
+}
+
+@media (max-width: 759px), (max-height: 500px) {
+  div.msu-ctn {
+    &[data-tab='.local-content'] {
+      .source-body > .back-to-menu {
+        display: none;
+      }
+
+      .popup-content {
+        flex-direction: column-reverse;
+        max-width: 300px;
+        height: auto;
+      }
+
+      .source-head {
+        display: block;
+      }
+
+      .source-body {
+        & > div {
+          height: auto;
+          margin: 0;
+        }
+      }
+    }
+
+    .drop-area {
+      .lbl,
+      .or {
+        display: none;
+      }
+
+      &.highlight {
+        border: none;
+
+        .btn {
+          display: inline-block;
+        }
+
+        &::before {
+          display: none;
+        }
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+  }
+}

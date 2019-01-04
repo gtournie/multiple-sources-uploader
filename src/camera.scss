@@ -1,0 +1,161 @@
+.msu-ctn {
+  .camera-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    .lbl {
+      margin-top: 15px;
+      margin-bottom: 5px;
+    }
+
+    .btn {
+      margin-top: 10px;
+    }
+
+    &.pic-mode {
+      .pic {
+        display: inline-block;
+      }
+
+      .stream-on {
+        display: none;
+      }
+
+      .stream-off {
+        display: block;
+      }
+
+      video {
+        visibility: hidden;
+      }
+    }
+
+    .stream-off,
+    .stream-on {
+      text-align: center;
+    }
+
+    .stream-off {
+      display: none;
+    }
+
+    &.loading {
+      .stream-on,
+      .actions {
+        visibility: hidden;
+      }
+
+      video {
+        height: 300px;
+        visibility: hidden;
+      }
+    }
+
+    .video-container {
+      display: inline-block;
+      font-size: 0;
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .wrapper {
+      position: relative;
+      display: inline-block;
+    }
+
+    .actions {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      text-align: right;
+      color: #888;
+
+      span {
+        float: left;
+        font-size: 0;
+        background: rgba(255, 255, 255, 0.5);
+        border-radius: 2px;
+        padding: 5px;
+        color: #353535;
+
+        & + span {
+          margin-left: 5px;
+        }
+
+        svg {
+          fill: currentColor;
+        }
+      }
+    }
+
+    .flip {
+      cursor: pointer;
+
+      &:hover {
+        opacity: 0.5;
+      }
+    }
+
+    video {
+      max-width: 100%;
+      max-height: 370px;
+    }
+
+    .pic {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: none top center/100% no-repeat;
+    }
+  }
+}
+
+@media (max-height: 615px) {
+  div.msu-ctn {
+    .camera-content {
+      video {
+        max-height: 300px;
+      }
+    }
+  }
+}
+
+@media (max-height: 500px) {
+  div.msu-ctn {
+    .camera-content {
+      video {
+        max-height: 210px;
+      }
+    }
+  }
+}
+
+@media (max-height: 400px) {
+  div.msu-ctn {
+    .camera-content {
+      .lbl {
+        margin-top: -15px;
+      }
+      video {
+        max-height: 170px;
+      }
+    }
+  }
+}
+
+@media (min-height: 705px) {
+  div.msu-ctn {
+    .camera-content {
+      video {
+        max-height: 450px;
+      }
+    }
+  }
+}
