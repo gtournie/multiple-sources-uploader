@@ -278,7 +278,7 @@
 
 @media (max-width: 759px), (max-height: 500px) {
   div.msu-ctn {
-    box-shadow: 0 0 1000vmin 1000vmin white;
+    box-shadow: 0 0 999vmin 999vmin white;
 
     .loading {
       &::before,

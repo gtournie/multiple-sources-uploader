@@ -10,7 +10,7 @@ import Camera from './camera'
 import Facebook from './sources/facebook'
 import GooglePhotos from './sources/google-photos'
 import Instagram from './sources/instagram'
-import MSG from './messages'
+import en from '../locales/en'
 
 import {
   renderWheel,
@@ -30,39 +30,40 @@ import {
 
 import './index.scss'
 
+// EN by default
+let messages = en
+MSUploader.setMessages = m => {
+  messages = m
+}
+
 const TEMPLATE = () => {
-  const formatMsg = MSUploader.formatMessage
   return `<div class="popup">
 <div class="popup-content">
 <div class="progress"><div class="progress-bar"></div></div>
 <button type="button" class="close"></button>
 <div class="source-head">
-  <div class="desc">${formatMsg(MSG.or_choose_from)}</div>
-  <div class="tab" data-target=".crop-content" style="display: none" title="${formatMsg(MSG.tab_crop)}">
+  <div class="desc">${i18n('or_choose_from')}</div>
+  <div class="tab" data-target=".crop-content" style="display: none" title="${i18n('tab_crop')}">
   ${CROP_ICON}</div>
-  <div class="tab active" data-target=".local-content" title="${formatMsg(MSG.tab_local)}">${FILE_ICON}</div>
-  <div style="display:none" class="tab" data-target=".camera-content" title="${formatMsg(
-    MSG.tab_camera,
-  )}">${CAMERA_ICON}</div>
-  <div class="tab source-tab" data-key="facebook" data-target=".facebook-content" title="${formatMsg(
-    MSG.tab_facebook,
+  <div class="tab active" data-target=".local-content" title="${i18n('tab_local')}">${FILE_ICON}</div>
+  <div style="display:none" class="tab" data-target=".camera-content" title="${i18n('tab_camera')}">${CAMERA_ICON}</div>
+  <div class="tab source-tab" data-key="facebook" data-target=".facebook-content" title="${i18n(
+    'tab_facebook',
   )}">${FACEBOOK_ICON}</div>
-  <div class="tab source-tab" data-key="googlePhotos" data-target=".google-photos-content" title="${formatMsg(
-    MSG.tab_google_photos,
+  <div class="tab source-tab" data-key="googlePhotos" data-target=".google-photos-content" title="${i18n(
+    'tab_google_photos',
   )}">${GOOGLE_PHOTOS_ICON}</div>
-  <div class="tab source-tab" data-key="instagram" data-target=".instagram-content" title="${formatMsg(
-    MSG.tab_instagram,
+  <div class="tab source-tab" data-key="instagram" data-target=".instagram-content" title="${i18n(
+    'tab_instagram',
   )}">${INSTAGRAM_ICON}</div>
 </div>
 <div class="source-body">
   <div class="flash"></div>
-  <div class="back-to-menu link">${formatMsg(MSG.menu)}</div>
+  <div class="back-to-menu link">${i18n('menu')}</div>
   <div style="display: none" class="crop-content">
     <div class="preview">
       <div class="ctn"><img crossorigin="anonymous" /></div>
-      <div><div class="btn lesser back">${formatMsg(MSG.back)}</div><div class="btn upload">${formatMsg(
-    MSG.cropper_upload,
-  )}</div></div>
+      <div><div class="btn lesser back">${i18n('back')}</div><div class="btn upload">${i18n('upload')}</div></div>
     </div>
     <div class="actions">
       <div class="rotate" data-add="-90">${ROTATE_LEFT_ICON}</div>
@@ -87,21 +88,21 @@ const TEMPLATE = () => {
       <div class="wheel" data-dir="h">${renderWheel(true)}</div>
       <div class="wheel" data-dir="v">${renderWheel()}</div>
     </div>
-    <div class="reset link">${formatMsg(MSG.cropper_reset)}</div>
-    <div class="done btn">${formatMsg(MSG.cropper_ok)}</div>
+    <div class="reset link">${i18n('reset')}</div>
+    <div class="done btn">${i18n('ok')}</div>
   </div>
   <div style="display: none" class="local-content">
-    <div class="drop-area" data-help="${formatMsg(MSG.local_drop_a_file)}">
-      <div class="lbl">${formatMsg(MSG.local_drag_n_drop)}</div>
-      <div class="or">${formatMsg(MSG.local_or)}</div>
+    <div class="drop-area" data-help="${i18n('drop_a_file')}">
+      <div class="lbl">${i18n('drag_n_drop')}</div>
+      <div class="or">${i18n('or')}</div>
       <div class="file-btn btn">
-        ${formatMsg(MSG.local_choose_a_file)}
+        ${i18n('choose_a_file')}
         <input type="file" title="" />
       </div>
     </div>
   </div>
   <div style="display: none" class="camera-content">
-    <div class="lbl">${formatMsg(MSG.camera_title)}</div>
+    <div class="lbl">${i18n('camera_title')}</div>
     <div class="video-container">
       <div class="wrapper">
         <video class="video"></video>
@@ -113,42 +114,42 @@ const TEMPLATE = () => {
       </div>
     </div>
     <div class="stream-off">
-      <button class="take-another-one btn lesser">${formatMsg(MSG.camera_another_one)}</button>
-      <button class="use-it btn">${formatMsg(MSG.camera_use_it)}</button>
+      <button class="take-another-one btn lesser">${i18n('camera_another_one')}</button>
+      <button class="use-it btn">${i18n('camera_use_it')}</button>
     </div>
     <div class="stream-on">
-      <button class="take-photo btn">${formatMsg(MSG.camera_take_photo)}</button>
+      <button class="take-photo btn">${i18n('camera_take_photo')}</button>
     </div>
   </div>
   <div style="display: none" class="direct-content">
   </div>
   <div style="display: none" class="source-content">
     <div style="display: none" class="view albums">
-      <div class="lbl">${formatMsg(MSG.source_albums_title)}</div>
+      <div class="lbl">${i18n('albums_title')}</div>
       <div class="list"></div>
     </div>
     <div style="display: none" class="view photos">
-      <div class="lbl album-name">${formatMsg(MSG.source_photos_title)}</div>
-      <div class="action"><span class="back link">${formatMsg(MSG.back)}</span></div>
+      <div class="lbl album-name">${i18n('photos_title')}</div>
+      <div class="action"><span class="back link">${i18n('back')}</span></div>
       <div class="list"></div>
     </div>
   </div>
   <div style="display: none" class="facebook-content source">
     <div class="view intro">
-      <div class="lbl">${formatMsg(MSG.facebook_desc)}</div>
-      <button class="connect btn">${formatMsg(MSG.facebook_btn)}</button>
+      <div class="lbl">${i18n('facebook_desc')}</div>
+      <button class="connect btn">${i18n('facebook_btn')}</button>
     </div>
   </div>
   <div style="display: none" class="google-photos-content source">
     <div class="view intro">
-      <div class="lbl">${formatMsg(MSG.google_photos_desc)}</div>
-      <button class="connect btn">${formatMsg(MSG.google_photos_btn)}</button>
+      <div class="lbl">${i18n('google_photos_desc')}</div>
+      <button class="connect btn">${i18n('google_photos_btn')}</button>
     </div>
   </div>
   <div style="display: none" class="instagram-content source">
     <div class="view intro">
-      <div class="lbl">${formatMsg(MSG.instagram_desc)}</div>
-      <button class="connect btn">${formatMsg(MSG.instagram_btn)}</button>
+      <div class="lbl">${i18n('instagram_desc')}</div>
+      <button class="connect btn">${i18n('instagram_btn')}</button>
     </div>
   </div>
 </div>
@@ -175,7 +176,7 @@ function displayCameraTab(camera) {
 
 detectCamera(displayCameraTab)
 
-const MSUploader = function(options) {
+export default function MSUploader(options) {
   if (isNode) return
 
   options = options || {}
@@ -212,6 +213,11 @@ const MSUploader = function(options) {
 
   // Close
   events.push(on(container, 'click', '.close', destroy))
+  events.push(
+    on(container, 'click', e => {
+      if (e.target === container) destroy()
+    }),
+  )
 
   // Display tabs or not
   displayCameraTab(hasCamera)
@@ -240,7 +246,7 @@ const MSUploader = function(options) {
     upload,
     onSelect,
     flash,
-    formatMessage: MSUploader.formatMessage,
+    i18n: i18n,
     options,
     minWidth: minWidth || 0,
     minHeight: minHeight || 0,
@@ -346,7 +352,7 @@ const MSUploader = function(options) {
     if (options.back) backToPreviousTab()
     clearTimeout(flashTimer)
     flashCtn.className = `flash ${options.type || 'danger'}`
-    flashCtn.innerHTML = MSUploader.formatMessage(message)
+    flashCtn.innerHTML = i18n(message, options.values)
     show(flashCtn)
     flashTimer = setTimeout(() => hide(flashCtn), 3000)
   }
@@ -356,9 +362,13 @@ const MSUploader = function(options) {
   }
 }
 
-MSUploader.formatMessage = msg => {
-  return (msg.props || msg).defaultMessage
+function i18n(prop, values) {
+  let msg = messages[prop]
+  if (values)
+    each(Object.keys(values), k => {
+      msg = msg.replace(new RegExp(`\{${k}\}`), values[k])
+    })
+  return msg
 }
 
-export default MSUploader
-module.exports = MSUploader
+export { messages }

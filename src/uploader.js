@@ -1,10 +1,13 @@
 import { handleRequestStates } from './tools/request'
+import { on } from './tools/dom'
 import { each } from './tools/tools'
 
 function FN() {}
 
 export default function uploader(options) {
   options = options || {}
+  let stopEvent
+  let count = 0
 
   function upload(file, data) {
     const xhr = new XMLHttpRequest()
@@ -20,6 +23,12 @@ export default function uploader(options) {
 
     const xhrUpload = xhr.upload
     xhrUpload.onloadstart = () => {
+      if (0 === count++) {
+        stopEvent = on(window, 'beforeunload', e => {
+          e.preventDefault()
+          return (e.returnValue = '')
+        })
+      }
       ;(options.onStart || FN)(file.name)
     }
     xhrUpload.onprogress = e => {
@@ -30,11 +39,12 @@ export default function uploader(options) {
     handleRequestStates(
       xhr,
       () => {
-        const extractURL = options.extractUrlFromResponse
-        ;(options.onDone || FN)(extractURL ? extractURL(xhr) : xhr.responseText)
+        ;(options.onDone || FN)(xhr)
+        if (1 === count--) stopEvent()
       },
       () => {
         ;(options.onError || FN)(file.name)
+        if (1 === count--) stopEvent()
       },
     )
 

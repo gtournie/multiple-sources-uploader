@@ -2,7 +2,6 @@ import { getQueryFunc, getLoadingFunc, stopObserving } from './tools/tab'
 import isNode from './tools/is-node'
 import { on, addClass, removeClass } from './tools/dom'
 import { getOrientation, webPSupport, convertGif } from './tools/image'
-import MSG from './messages'
 
 import './local.scss'
 
@@ -68,7 +67,7 @@ export default function Local(tabContainer, args) {
     if (!file) return
 
     // Validation
-    const ftype = file.type || ''
+    const ftype = (file.type || '').toLowerCase()
     const fext = fileExt(file.name || '')
     if (
       accept &&
@@ -76,7 +75,7 @@ export default function Local(tabContainer, args) {
         typeof type === 'string' ? type === (type.charAt(0) === '.' ? fext : ftype) : type.test(ftype),
       )
     ) {
-      return flash(MSG.local_invalid_file)
+      return flash('invalid_file_type')
     }
 
     loading()
@@ -90,7 +89,7 @@ export default function Local(tabContainer, args) {
         },
         () => {
           loading(false)
-          flash(MSG.load_error)
+          flash('load_error')
         },
       )
     }

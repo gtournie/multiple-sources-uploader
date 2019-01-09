@@ -137,7 +137,11 @@ export function transformPic(image, options, callback) {
   ctx.drawImage(image, left, top, width, height, -width / 2, -height / 2, width, height)
   ctx.restore()
   const downsizeCallback = () => {
-    canvas.toBlob(callback, 'image/jpeg', 0.92)
+    if (options.webp && _webPSupport) {
+      canvas.toBlob(callback, 'image/webp')
+    } else {
+      canvas.toBlob(callback, 'image/jpeg', 0.92)
+    }
   }
   if (options.resizeToWidth) {
     downsize(canvas, ctx, options.resizeToWidth, options.resizeToHeight, downsizeCallback)

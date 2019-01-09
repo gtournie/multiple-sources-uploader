@@ -3,13 +3,16 @@
   "description": "Upload a photo from your local files, camera or your favorite social networks like Facebook, Google Photos or Instagram",
   "version": "1.0.0",
   "scripts": {
-    "start": "webpack --watch",
-    "build": "webpack --progress --profile --colors",
-    "clean": "rimraf dist",
-    "prepublish": "npm run clean && npm run build"
+    "start": "webpack --watch --config webpack/development.js",
+    "build": "npm run clean && npm run build:lib && npm run build:umd && npm run build:umd:min",
+    "build:lib": "babel src --out-dir lib --copy-files",
+    "build:umd": "webpack --config webpack/development.js",
+    "build:umd:min": "webpack --config webpack/production.js",
+    "clean": "rimraf dist lib",
+    "prepublishOnly": "npm run clean && npm run build"
   },
-  "module": "dist/main.js",
-  "main": "dist/main.js",
+  "module": "lib/index.js",
+  "main": "lib/index.js",
   "sideEffects": false,
   "repository": {
     "type": "git",
@@ -34,22 +37,26 @@
   },
   "homepage": "https://github.com/gtournie/multiple-sources-uploader#readme",
   "devDependencies": {
+    "@babel/cli": "^7.2.3",
     "@babel/core": "^7.1.2",
     "@babel/plugin-proposal-class-properties": "^7.2.1",
     "@babel/plugin-transform-modules-commonjs": "^7.2.0",
     "@babel/preset-env": "^7.1.0",
     "@babel/register": "^7.0.0",
+    "@babel/runtime": "^7.2.0",
+    "autoprefixer": "9.4.4",
     "babel-loader": "^8.0.4",
     "css-loader": "2.1.0",
     "mini-css-extract-plugin": "^0.5.0",
     "node-sass": "^4.11.0",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
+    "rimraf": "2.6.1",
     "sass-loader": "^7.1.0",
     "webpack": "^4.20.2",
     "webpack-cli": "^3.1.2"
   },
   "browserslist": [
     "> 0.5%",
-    "IE >= 10"
+    "not IE <= 11"
   ]
 }

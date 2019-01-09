@@ -11,6 +11,7 @@ pids
 .idea
 .history
 
+lib/
 dist/
 
 # Dependency directory

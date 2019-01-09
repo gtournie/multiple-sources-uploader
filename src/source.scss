@@ -77,7 +77,7 @@
     }
   }
 
-  .photo[data-invalid]::before {
+  .photo[data-too-small]::before {
     content: '⚠';
     position: absolute;
     color: red;

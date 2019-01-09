@@ -3,7 +3,6 @@ import { on, show, hide, addClass, removeClass } from './tools/dom'
 import { transformPic, newSize } from './tools/image'
 import { position, transform, applyRatio } from './tools/position'
 import { each } from './tools/tools'
-import MSG from './messages'
 
 import './cropper.scss'
 
@@ -62,13 +61,13 @@ export default function Cropper(tabContainer, args) {
   preview.onerror = () => {
     loading(false)
     removeClass(tabContainer, 'preview-mode')
-    flash(MSG.load_error)
+    flash('load_error')
   }
 
   img.onload = imageReady
-  img.onerror = () => {
+  img.onerror = e => {
     loading(false)
-    flash(MSG.load_error, { back: true })
+    flash('load_error', { back: true })
   }
 
   const imgStyle = img.style
@@ -126,6 +125,10 @@ export default function Cropper(tabContainer, args) {
       }),
       on(tabContainer, 'click', '.upload', () => {
         args.upload(uploadBlob)
+      }),
+      on(document, 'contextmenu', e => {
+        // Deactivate right click
+        e.preventDefault()
       }),
     ]
   }
@@ -201,7 +204,7 @@ export default function Cropper(tabContainer, args) {
     const nh = img.naturalHeight
 
     if (nw < minWidth || nh < minHeight) {
-      return flash(MSG.source_too_small, { back: true })
+      return flash('too_small', { back: true, values: { min: `${minWidth}x${minHeight}` } })
     }
 
     const invert = 90 === baseRot || 270 == baseRot
@@ -363,15 +366,21 @@ export default function Cropper(tabContainer, args) {
     const heightRatio = img.naturalHeight / (imgHeight * scale)
     const cropMetrics = cropperMetrics()
     const imgPos = imagePos()
-    const resizeToWidth = options.resizeToWidth
+    const width = cropMetrics.width * widthRatio
+    const height = cropMetrics.height * heightRatio
+    let resizeToWidth = options.resizeToWidth
+
+    if (!options.upscale && width <= resizeToWidth) {
+      resizeToWidth = null
+    }
 
     transformPic(
       img,
       {
         left: (cropMetrics.left - imgPos.left + (imgWidth * (scale - 1)) / 2) * widthRatio,
         top: (cropMetrics.top - imgPos.top + (imgHeight * (scale - 1)) / 2) * heightRatio,
-        width: cropMetrics.width * widthRatio,
-        height: cropMetrics.height * heightRatio,
+        width: width,
+        height: height,
         rotate: baseRot + rot,
         flip: flip,
         scale: scale,
@@ -379,6 +388,7 @@ export default function Cropper(tabContainer, args) {
         resizeToHeight: ratio
           ? (resizeToWidth * ratio.h) / ratio.v
           : (resizeToWidth * cropMetrics.height) / cropMetrics.width,
+        webp: options.webpIfSupported,
       },
       blob => {
         uploadBlob = blob

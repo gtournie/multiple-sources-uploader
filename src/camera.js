@@ -3,7 +3,6 @@ import { on, show, hide, addClass, removeClass } from './tools/dom'
 import { mediaDevices, takePic } from './tools/image'
 import { transform } from './tools/position'
 import { each } from './tools/tools'
-import MSG from './messages'
 
 import './camera.scss'
 
@@ -35,7 +34,7 @@ export default function Camera(tabContainer, args) {
       .getMedia({ video: true })
       .catch(() => {
         loading(false)
-        args.flash(MSG_camera_access_error, { back: true })
+        args.flash('camera_access_error', { back: true })
       })
       .then(s => {
         stream = s

@@ -1,7 +1,6 @@
 import { getQueryFunc, getQueryAllFunc, getLoadingFunc, stopObserving } from './tools/tab'
 import { on, show, hide, addHTML, addClass, removeClass, remove } from './tools/dom'
 import { each } from './tools/tools'
-import MSG from './messages'
 
 import './source.scss'
 
@@ -10,7 +9,7 @@ export const DEFAULT_TIMEOUT = 20 * 60 * 1000
 
 export default function Source(tabContainer, args, onConnect, loadMorePhotos, loadPhotos, loadMoreAlbums) {
   const flash = args.flash
-  const formatMessage = args.formatMessage
+  const i18n = args.i18n
 
   const $ = getQueryFunc(tabContainer)
   const $$ = getQueryAllFunc(tabContainer)
@@ -39,11 +38,11 @@ export default function Source(tabContainer, args, onConnect, loadMorePhotos, lo
     photoDataByAlbumId: {},
     failToConnect: () => {
       loading(false)
-      flash(MSG.source_connection_error)
+      flash('connection_error')
     },
     failToLoad: () => {
       loading(false)
-      flash(MSG.source_loading_error)
+      flash('loading_error')
     },
   }
 
@@ -78,8 +77,9 @@ export default function Source(tabContainer, args, onConnect, loadMorePhotos, lo
       }),
       on(tabContainer, 'click', '.photo', e => {
         const target = e.currTarget
-        const invalid = target.getAttribute('data-invalid')
-        invalid ? flash(MSG[invalid]) : args.onSelect(target.getAttribute('data-photo'))
+        target.getAttribute('data-too-small')
+          ? flash('too_small', { values: { min: `${minWidth}x${minHeight}` } })
+          : args.onSelect(target.getAttribute('data-photo'))
       }),
     ]
   }
@@ -93,7 +93,7 @@ export default function Source(tabContainer, args, onConnect, loadMorePhotos, lo
       self.photoDataByAlbumId = {}
       setSelectView('intro')
       if (tabVisible) {
-        flash(MSG.source_timeout, { type: 'warning' })
+        flash('timeout', { type: 'warning' })
       }
       disconnectionScheduled = false
     }, DEFAULT_TIMEOUT)
@@ -121,9 +121,7 @@ export default function Source(tabContainer, args, onConnect, loadMorePhotos, lo
         })
         .join('') +
         (albumData.nextPageInfo
-          ? `<div data-more="albums" data-next-page-info="${albumData.nextPageInfo}" class="more">${formatMessage(
-              MSG.source_more,
-            )}</div>`
+          ? `<div data-more="albums" data-next-page-info="${albumData.nextPageInfo}" class="more">${i18n('more')}</div>`
           : ''),
     )
     remove(loadMoreElt)
@@ -131,7 +129,7 @@ export default function Source(tabContainer, args, onConnect, loadMorePhotos, lo
     const noData = !length && !$('.album-pic', albums)
     ;(noData ? addClass : removeClass)(albums, 'no-data')
     if (noData) {
-      albums.innerHTML = `<div>${formatMessage(MSG.source_no_data)}</div>`
+      albums.innerHTML = `<div>${i18n('no_data')}</div>`
     }
   }
 
@@ -152,15 +150,13 @@ export default function Source(tabContainer, args, onConnect, loadMorePhotos, lo
       photoData.photos
         .slice(length)
         .map(img => {
-          const valid = img.width && img.height ? img.width >= minWidth && img.height >= minHeight : true
-          return `<div class="photo" ${valid ? '' : `data-invalid="source_too_small" `}title="${img.title ||
+          const tooSmall = img.width && img.height ? img.width >= minWidth && img.height >= minHeight : true
+          return `<div class="photo" ${tooSmall ? '' : `data-too-small="true" `}title="${img.title ||
             ''}" data-photo="${img.photo}" style="background-image: url('${img.thumbnail}')"></div>`
         })
         .join('') +
         (photoData.nextPageInfo && !$('.photos .list [data-next-page-info]')
-          ? `<div data-more="photos" data-next-page-info="${photoData.nextPageInfo}" class="more">${formatMessage(
-              MSG.source_more,
-            )}</div>`
+          ? `<div data-more="photos" data-next-page-info="${photoData.nextPageInfo}" class="more">${i18n('more')}</div>`
           : ''),
     )
     remove(loadMoreElt)
@@ -168,7 +164,7 @@ export default function Source(tabContainer, args, onConnect, loadMorePhotos, lo
     const noData = !self.selectedAlbumId && !length && !$('.photo', photos)
     ;(noData ? addClass : removeClass)(photos, 'no-data')
     if (noData) {
-      photos.innerHTML = `<div>${formatMessage(MSG.source_no_data)}</div>`
+      photos.innerHTML = `<div>${i18n('no_data')}</div>`
     }
   }
 
