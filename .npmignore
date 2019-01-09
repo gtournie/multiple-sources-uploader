@@ -1,0 +1,9 @@
+examples
+test
+.babelrc
+.eslint*
+.idea
+.history
+.npmignore
+.travis.yml
+webpack
