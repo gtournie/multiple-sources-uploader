@@ -39,7 +39,6 @@ MSUploader.setMessages = m => {
 const TEMPLATE = () => {
   return `<div class="popup">
 <div class="popup-content">
-<div class="progress"><div class="progress-bar"></div></div>
 <button type="button" class="close"></button>
 <div class="source-head">
   <div class="desc">${i18n('or_choose_from')}</div>
@@ -372,3 +371,4 @@ function i18n(prop, values) {
 }
 
 export { messages }
+module.exports = MSUploader
