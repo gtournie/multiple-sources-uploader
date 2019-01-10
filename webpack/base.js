@@ -2,6 +2,7 @@ var webpack = require('webpack')
 var MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 module.exports = {
+  entry: ['./src/index.js', './src/index.scss'],
   output: {
     filename: 'ms-uploader.js',
     library: 'MSUploader',

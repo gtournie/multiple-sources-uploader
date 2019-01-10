@@ -28,8 +28,6 @@ import {
   ZOOM_MINUS_ICON,
 } from './icons'
 
-import './index.scss'
-
 // EN by default
 let messages = en
 MSUploader.setMessages = m => {

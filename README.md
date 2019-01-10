@@ -50,10 +50,10 @@ new MSUploader(options)
 | url          | **Required**. Your upload url.                                                                       |  |
 | method       | The HTTP method to use for the request (e.g. "POST", "GET", "PUT"). Default: POST                    |
 | getSignature | Function that should retrieve signature fields and pass it to its callback param (see example below) |
-| onStart      | Function triggered when upload starts. File name is passed as first arg.                             |
+| onStart      | Function triggered when upload starts. A blob representing the photo is passed as first arg.         |
 | onProgress   | Function triggered when uploading. Percent of completion is passed as first arg.                     |
-| onDone       | Function triggered when upload is succesful. The XMLHttpRequest object is passed as an arg.          |
-| onError      | Function triggered if the upload fails. the file name is passed as an arg.                           |
+| onDone       | Function triggered when upload is succesful. The XMLHttpRequest object is passed as first arg.       |
+| onError      | Function triggered if the upload fails. The XMLHttpRequest object is passed as first arg.            |
 
 > Note:
 >
@@ -106,18 +106,19 @@ new MSUploader({
         .then(response => response.json())
         .then(callback)
     },
-    onStart: fileName => {
-      console.log(`Let's get the party started! File: ${fileName}`)
+    onStart: blob => {
+      // Note: you can use the blob to display a preview
+      console.log(`Let's get the party started!`)
     },
     onProgress: progress => {
       console.log(`${progress}%`)
     },
-    onError: fileName => {
-      console.log(`Yikes. Something wrong happened. File: ${fileName}`)
+    onError: xhr => {
+      console.log(`Yikes. Something wrong happened.`)
     },
     onDone: xhr => {
-      const fileName = xhr.responseXML.getElementsByTagName('Location')[0].innerHTML
-      console.log('File uploaded!', decodeURIComponent(fileName))
+      const url = xhr.responseXML.getElementsByTagName('Location')[0].innerHTML
+      console.log('File uploaded!', decodeURIComponent(url))
     },
   },
   cropper: {

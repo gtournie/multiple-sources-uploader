@@ -4,8 +4,6 @@ import { mediaDevices, takePic } from './tools/image'
 import { transform } from './tools/position'
 import { each } from './tools/tools'
 
-import './camera.scss'
-
 export default function Camera(tabContainer, args) {
   const $ = getQueryFunc(tabContainer)
   const loading = getLoadingFunc(tabContainer)

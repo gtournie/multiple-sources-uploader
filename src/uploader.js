@@ -29,7 +29,7 @@ export default function uploader(options) {
           return (e.returnValue = '')
         })
       }
-      ;(options.onStart || FN)(file.name)
+      ;(options.onStart || FN)(file)
     }
     xhrUpload.onprogress = e => {
       ;(e.lengthComputable ? options.onProgress || FN : FN)((e.loaded / e.total) * 100)
@@ -43,7 +43,7 @@ export default function uploader(options) {
         if (1 === count--) stopEvent()
       },
       () => {
-        ;(options.onError || FN)(file.name)
+        ;(options.onError || FN)(xhr)
         if (1 === count--) stopEvent()
       },
     )

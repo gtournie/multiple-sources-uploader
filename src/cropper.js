@@ -4,8 +4,6 @@ import { transformPic, newSize } from './tools/image'
 import { position, transform, applyRatio } from './tools/position'
 import { each } from './tools/tools'
 
-import './cropper.scss'
-
 const ADJUST_RATIO = {
   left: (pos, otherSide, posLeft, posTop, posRight, posBottom, ratio) => {
     // height: posBottom.bottom - posTop.top

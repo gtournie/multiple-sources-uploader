@@ -2,7 +2,6 @@ import { getQueryFunc, getQueryAllFunc, getLoadingFunc, stopObserving } from './
 import { on, show, hide, addHTML, addClass, removeClass, remove } from './tools/dom'
 import { each } from './tools/tools'
 
-import './source.scss'
 
 export const DEFAULT_LOAD_ITEMS = 24
 export const DEFAULT_TIMEOUT = 20 * 60 * 1000

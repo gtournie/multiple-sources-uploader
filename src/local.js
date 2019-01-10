@@ -3,8 +3,6 @@ import isNode from './tools/is-node'
 import { on, addClass, removeClass } from './tools/dom'
 import { getOrientation, webPSupport, convertGif } from './tools/image'
 
-import './local.scss'
-
 const DRAG_N_DROP_SUPPORT = isNode
   ? false
   : (div => 'draggable' in div || ('ondragstart' in div && 'ondrop' in div))(document.createElement('div'))
