@@ -148,7 +148,7 @@ You can either use the translations in the `locales/` folder, or to write your o
 
 ```javascript
 import MSUploader from 'multiple-sources-uploader'
-import fr from 'multiple-sources-uploader/locales/fr'
+import fr from 'multiple-sources-uploader/lib/locales/fr'
 
 MSUploader.setMessages(fr)
 ```

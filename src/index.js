@@ -10,7 +10,7 @@ import Camera from './camera'
 import Facebook from './sources/facebook'
 import GooglePhotos from './sources/google-photos'
 import Instagram from './sources/instagram'
-import en from '../locales/en'
+import en from './locales/en'
 
 import {
   renderWheel,

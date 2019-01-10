@@ -1,7 +1,7 @@
 {
   "name": "multiple-sources-uploader",
   "description": "Upload a photo from your local files, camera or your favorite social networks like Facebook, Google Photos or Instagram",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "scripts": {
     "start": "webpack --watch --config webpack/development.js",
     "build": "npm run clean && npm run build:lib && npm run build:umd && npm run build:umd:min",
