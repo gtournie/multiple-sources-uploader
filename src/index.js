@@ -171,7 +171,7 @@ function displayCameraTab(camera) {
   ;(camera ? show : remove)(container.querySelector('[data-target=".camera-content"]'))
 }
 
-detectCamera(displayCameraTab)
+if (!isNode) detectCamera(displayCameraTab)
 
 export default function MSUploader(options) {
   if (isNode) return
