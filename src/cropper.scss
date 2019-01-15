@@ -213,8 +213,7 @@
     bottom: 0;
     will-transform: left, top, right, bottom;
     transform: translateZ(0);
-    box-shadow: 0 0 999vw 999vm rgba(0, 0, 0, 0.5);
-    box-shadow: 0 0 999vmin 999vmin rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 2000px 2000px rgba(0, 0, 0, 0.5);
     background: linear-gradient(90deg, white 50%, rgba(0, 0, 0, 0.5) 50%),
       linear-gradient(0deg, white 50%, rgba(0, 0, 0, 0.5) 50%),
       linear-gradient(90deg, white 50%, rgba(0, 0, 0, 0.5) 50%),

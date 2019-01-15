@@ -181,8 +181,8 @@ export default function Cropper(tabContainer, args) {
     rot = 0
     scale = 1
     flip = params[1] || { h: 1, v: 1 }
-    img.style = 'top:0;left:0'
-    cropper.style = ''
+    imgStyle.cssText = 'top:0;left:0'
+    cropStyle.cssText = ''
     timeoutRepeat = 0
     each(wheels, wheel => {
       transform(wheel, rot, flip, scale)
