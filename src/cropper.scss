@@ -55,6 +55,7 @@
 
   .crop-content {
     display: flex;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 
     .img-container,
     img {

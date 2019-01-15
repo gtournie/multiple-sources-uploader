@@ -6,11 +6,11 @@ Lightweight (~20Kb minified & gziped) uploader that connects with social medias.
 
 ## Why?
 
-I couldn't find any package that would help getting photos from social media APIs. The closest thing that I found was cloudinary/uploadcare widgets, which are quite heavy (not acceptable on mobile) and restricted to use with their products.
+I couldn't find any package that would help me getting photos from social media APIs. The closest thing I found was cloudinary/uploadcare widgets, which are quite heavy (not acceptable on mobile) and restricted to use with their services.
 
-Also, I didn't like the idea of uploading big photos and to resize them on the server side. That's why I included a cropper + resizer (based on [pica - high quality resizer](https://github.com/nodeca/pica)) to this uploader. This way you'll only upload what you need and save bandwith & storage space (plus time for your users). As a bonus, it can convert your photos to webp if your browser support it.
+Also, I didn't like the idea of uploading big photos and to resize them on the server. That's why I included a cropper and a resizer (based on [pica - high quality resizer](https://github.com/nodeca/pica)) to this uploader. This way, you'll only upload what you need and save bandwith & storage space (plus time for your users). As a bonus, it can convert your photos to webp if your browser support it.
 
-When I tested it, I resized a 5.7Mb photo to 1000x1000 and its final weight was only 56Ko (webp format). Pretty smooth to upload, right?
+When I resized a 5.7Mb photo to 1000x1000, its final weight was only 56Ko (webp format). Pretty smooth to upload, right?
 
 ## Features
 
@@ -71,6 +71,17 @@ new MSUploader(options)
 | upscale         | Will resize the photo to `resizeToWidth` even if it's originally smaller. Default: false                                                                                                                                            |
 | webpIfSupported | Convert the photo to webp if the user's browser support it. Fallback to jpg otherwise. Default: false                                                                                                                               |
 
+#### Local
+
+| param name | description                                                                                                                                                                                                                                            |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| accept     | Similar to the input file attribute. You can specify a list of MIME types (eg: 'image/png,image/gif'), a list of extensions (eg: '.jpg,.jpeg,.gif'), or accept all kind of images ('image/\*'). Default: `'image/jpeg,image/gif,image/png,image/webp'` |
+
+> Note:
+>
+> - the cropper will only be compatible with the formats your browser can read
+> - if you specify `webp`, it will only accept this type of images if your browser support it
+
 #### Facebook
 
 | param name  | description                                                                                                              |
@@ -93,7 +104,7 @@ new MSUploader(options)
 | clientID    | Instagram authentication [clientID](https://www.instagram.com/developer/authentication/) |
 | itemsToLoad | Number of photos to load on each request. Default: 24                                    |
 
-> Note: To deactivate a social media, set his options to null.
+> Note: To deactivate a social media, set its options to null.
 
 ### Example (with amazon s3 upload)
 
@@ -102,13 +113,17 @@ new MSUploader({
   uploader: {
     url: 'https://my-bucket.s3.amazonaws.com',
     getSignature: callback => {
+      // Retrieve s3 presigned post fields from your server
       fetch('/s3_signature')
         .then(response => response.json())
         .then(callback)
     },
     onStart: blob => {
-      // Note: you can use the blob to display a preview
-      console.log(`Let's get the party started!`)
+      // You can use the blob to display a preview.
+      // Don't forget to call URL.revokeObjectURL once the img is loaded
+      document.querySelector('img').src = URL.createObjectURL(blob)
+      // Ensure to get the photo URL before the user submit his form
+      document.querySelector('[type="submit"]').disabled = true
     },
     onProgress: progress => {
       console.log(`${progress}%`)
@@ -117,15 +132,23 @@ new MSUploader({
       console.log(`Yikes. Something wrong happened.`)
     },
     onDone: xhr => {
-      const url = xhr.responseXML.getElementsByTagName('Location')[0].innerHTML
-      console.log('File uploaded!', decodeURIComponent(url))
+      // Extract the URL from the response (specific to S3)
+      const loc = xhr.responseXML.getElementsByTagName('Location')[0]
+      const url = decodeURIComponent(loc.innerHTML)
+      // Set your hidden field with the URL
+      document.querySelector('[name="photo_url"]').value = url
+      // Re-enable the form
+      document.querySelector('[type="submit"]').disabled = false
     },
   },
   cropper: {
-    ratio: { v: 1, h: 1 },
+    ratio: { v: 1, h: 1 }, // square aspect ratio
     minWidth: 100,
     resizeToWidth: 1000,
     webpIfSupported: true,
+  },
+  local: {
+    accept: 'image/jpeg,image/webp', // Only jpg/jpeg or webp
   },
   facebook: {
     appId: '...',
@@ -142,7 +165,7 @@ new MSUploader({
 
 ### i18n
 
-`MSUploader.setMessages({ ... })` provides a way to update all the texts (which are in english by default)
+`MSUploader.setMessages({ ... })` provides a way to update all the texts. Look at the [english messages](https://github.com/gtournie/multiple-sources-uploader/blob/master/src/locales/en.js) (by default).
 
 You can either use the translations in the `locales/` folder, or to write your own (feel free to make a PR in this case so everybody can use it=)
 

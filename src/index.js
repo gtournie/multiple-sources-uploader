@@ -43,7 +43,10 @@ const TEMPLATE = () => {
   <div class="tab" data-target=".crop-content" style="display: none" title="${i18n('tab_crop')}">
   ${CROP_ICON}</div>
   <div class="tab active" data-target=".local-content" title="${i18n('tab_local')}">${FILE_ICON}</div>
-  <div style="display:none" class="tab" data-target=".camera-content" title="${i18n('tab_camera')}">${CAMERA_ICON}</div>
+  <div style="display:none" class="tab file-btn" data-target=".camera-content" title="${i18n('tab_camera')}">
+    ${CAMERA_ICON}
+    <input type="file" accept="image/*" capture class="capture" />
+  </div>
   <div class="tab source-tab" data-key="facebook" data-target=".facebook-content" title="${i18n(
     'tab_facebook',
   )}">${FACEBOOK_ICON}</div>
@@ -164,10 +167,11 @@ const MANAGERS = {
 }
 
 let container
-let hasCamera = null
+let cameraType = null
 
 function displayCameraTab(camera) {
-  if (!container || null === camera) return (hasCamera = camera)
+  cameraType = camera
+  if (!container || null === camera) return
   ;(camera ? show : remove)(container.querySelector('[data-target=".camera-content"]'))
 }
 
@@ -205,6 +209,7 @@ export default function MSUploader(options) {
   container = document.createElement('div')
   addClass(container, 'msu-ctn')
   container.innerHTML = TEMPLATE()
+  ;(options.parent || document.body).appendChild(container)
   const $ = getQueryFunc(container)
   const $$ = getQueryAllFunc(container)
 
@@ -217,10 +222,24 @@ export default function MSUploader(options) {
   )
 
   // Display tabs or not
-  displayCameraTab(hasCamera)
+  displayCameraTab(cameraType)
   each($$('.source-tab'), source => {
     if (!options[source.getAttribute('data-key')]) remove(source)
   })
+
+  // Camera special tab on mobile
+  const captureInput = $('.tab .capture')
+  if ('capture' === cameraType) {
+    events.push(
+      on(captureInput, 'change', () => {
+        onSelect(captureInput.files[0])
+        captureInput.value = null
+      }),
+    )
+    $('.tab.file-btn').removeAttribute('data-target')
+  } else {
+    remove(captureInput)
+  }
 
   // Set device orientation
   events.push(on(window, 'orientationchange', setOrientation))
@@ -241,6 +260,7 @@ export default function MSUploader(options) {
   const gOptions = {
     container,
     upload,
+    capture: 'capture' === cameraType,
     onSelect,
     flash,
     i18n: i18n,
@@ -252,7 +272,7 @@ export default function MSUploader(options) {
   // Manage tabs
   const cropTab = $('[data-target=".crop-content"]')
   events.push(
-    on(container, 'click', '.tab', e => {
+    on(container, 'click', '[data-target]', e => {
       setTab(e.currTarget)
     }),
     on(container, 'click', '.back-to-menu', () => {
@@ -260,7 +280,6 @@ export default function MSUploader(options) {
     }),
   )
   setTab(container.querySelector('.tab.active'), false)
-  ;(options.parent || document.body).appendChild(container)
 
   function backToPreviousTab() {
     setTab(previousTab)

@@ -114,6 +114,22 @@
       bottom: 0;
       background: none top center/100% no-repeat;
     }
+
+    .file-btn {
+      display: none;
+    }
+
+    &.capture {
+      .lbl,
+      .video-container,
+      .take-photo {
+        display: none;
+      }
+
+      .file-btn {
+        display: inline-block;
+      }
+    }
   }
 }
 

@@ -34,20 +34,6 @@
       }
     }
   }
-
-  .file-btn {
-    position: relative;
-    overflow: hidden;
-
-    input {
-      position: absolute;
-      top: 0;
-      left: 0;
-      opacity: 0;
-      font-size: 1000px;
-      cursor: pointer;
-    }
-  }
 }
 
 @media (max-width: 759px), (max-height: 500px) {

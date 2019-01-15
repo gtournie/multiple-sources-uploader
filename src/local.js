@@ -1,7 +1,7 @@
 import { getQueryFunc, getLoadingFunc, stopObserving } from './tools/tab'
 import isNode from './tools/is-node'
 import { on, addClass, removeClass } from './tools/dom'
-import { getOrientation, webPSupport, convertGif } from './tools/image'
+import { webPSupport } from './tools/image'
 
 const DRAG_N_DROP_SUPPORT = isNode
   ? false
@@ -27,7 +27,7 @@ export default function Local(tabContainer, args) {
     .toLowerCase()
     .split(ACCEPT_SEP_REG)
     .reduce((acc, type) => {
-      if (type && (webPSupport || 'image/webp' !== type)) {
+      if (type && (webPSupport || ('image/webp' !== type && '.webp' !== type))) {
         acc.push(
           type.charAt(0) === '.' || type.indexOf('*') < 0
             ? type
@@ -76,38 +76,7 @@ export default function Local(tabContainer, args) {
       return flash('invalid_file_type')
     }
 
-    loading()
-    // Convert gif to stop animation
-    if ('image/gif' === file.type) {
-      return convertGif(
-        file,
-        dataURI => {
-          loading(false)
-          args.onSelect(dataURI)
-        },
-        () => {
-          loading(false)
-          flash('load_error')
-        },
-      )
-    }
-
-    getOrientation(file, orientation => {
-      loading(false)
-      args.onSelect(
-        file,
-        // Rotation
-        (5 === orientation || 6 === orientation
-          ? 1
-          : 3 === orientation || 4 === orientation
-          ? 2
-          : 7 === orientation || 8 === orientation
-          ? 3
-          : 0) * 90,
-        // Flip
-        { h: [2, 4, 5, 7].indexOf(orientation) >= 0 ? -1 : 1, v: 1 },
-      )
-    })
+    args.onSelect(file)
   }
 
   function highlight() {

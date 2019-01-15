@@ -1,6 +1,6 @@
 import { getQueryFunc, getQueryAllFunc, getLoadingFunc, stopObserving } from './tools/tab'
 import { on, show, hide, addClass, removeClass } from './tools/dom'
-import { transformPic, newSize } from './tools/image'
+import { transformPic, newSize, resetOrientation } from './tools/image'
 import { position, transform, applyRatio } from './tools/position'
 import { each } from './tools/tools'
 
@@ -39,6 +39,7 @@ export default function Cropper(tabContainer, args) {
   const minHeight = args.minHeight
   const options = args.options.cropper || {}
   const flash = args.flash
+  const iOs = /iPad|iPhone|iPod/.test(navigator.platform)
 
   const $ = getQueryFunc(tabContainer)
   const $$ = getQueryAllFunc(tabContainer)
@@ -86,7 +87,8 @@ export default function Cropper(tabContainer, args) {
     zoomInfo,
     scaleStep,
     metaSave,
-    params
+    params,
+    timeoutRepeat
   let evCache = []
   let prevDiff = -1
 
@@ -160,11 +162,17 @@ export default function Cropper(tabContainer, args) {
       metaSave = viewportmeta.content
       if (metaSave.indexOf('maximum-scale') < 0) viewportmeta.content += ',maximum-scale=1.0'
     }
-    if ('string' !== typeof dataURI) {
-      blob = dataURI
-      dataURI = URL.createObjectURL(dataURI)
-    }
     init()
+    if ('string' !== typeof dataURI) {
+      if (dataURI instanceof File) {
+        return resetOrientation(dataURI, b => {
+          blob = b
+          img.src = URL.createObjectURL(blob)
+        })
+      }
+      blob = dataURI
+      dataURI = URL.createObjectURL(blob)
+    }
     img.src = dataURI
   }
 
@@ -173,9 +181,12 @@ export default function Cropper(tabContainer, args) {
     rot = 0
     scale = 1
     flip = params[1] || { h: 1, v: 1 }
-    imgStyle.top = 0
-    imgStyle.left = 0
+    img.style = 'top:0;left:0'
     cropper.style = ''
+    timeoutRepeat = 0
+    each(wheels, wheel => {
+      transform(wheel, rot, flip, scale)
+    })
   }
 
   function reset() {
@@ -200,6 +211,9 @@ export default function Cropper(tabContainer, args) {
 
     const nw = img.naturalWidth
     const nh = img.naturalHeight
+
+    // on iOs naturalWiidth & naturalHeight are equal to 0 sometimes
+    if ((!nw || !nh) && ++timeoutRepeat < 6) return setTimeout(imageReady, 50)
 
     if (nw < minWidth || nh < minHeight) {
       return flash('too_small', { back: true, values: { min: `${minWidth}x${minHeight}` } })
@@ -244,10 +258,8 @@ export default function Cropper(tabContainer, args) {
     //     scale,
     //     imgPos.left,
     //     imgPos.top,
-    //     metrics.top,
-    //     metrics.right,
-    //     metrics.bottom,
     //     metrics.left,
+    //     metrics.top,
     //     metrics.width,
     //     metrics.height,
     //   )
@@ -289,7 +301,9 @@ export default function Cropper(tabContainer, args) {
       return (rot = oldRot)
     } // TODO: message (image size must be > ? move / resize cropper to rotate the image?...)
     transform(img, baseRot + rot, flip, scale)
-    each(wheels, wheel => transform(wheel, rot, { h: 1, v: 1 }, 1))
+    each(wheels, wheel => {
+      transform(wheel, rot, { h: 1, v: 1 }, 1)
+    })
   }
 
   function cropperInsideImg(imgScale, imgX, imgY, cropperLeft, cropperTop, cropperWidth, cropperHeight) {
@@ -298,8 +312,8 @@ export default function Cropper(tabContainer, args) {
 
     cropperLeft = Math.round((cropperLeft - imgX + (imgWidth * (imgScale - 1)) / 2) * widthRatio)
     cropperTop = Math.round((cropperTop - imgY + (imgHeight * (imgScale - 1)) / 2) * heightRatio)
-    const cropperRight = Math.round(cropperLeft + cropperWidth * widthRatio)
-    const cropperBottom = Math.round(cropperTop + cropperHeight * heightRatio)
+    const cropperRight = Math.floor(cropperLeft + cropperWidth * widthRatio)
+    const cropperBottom = Math.floor(cropperTop + cropperHeight * heightRatio)
 
     const rad = ((baseRot + rot) * Math.PI) / 180
     const sin = Math.sin(-rad)
@@ -433,8 +447,9 @@ export default function Cropper(tabContainer, args) {
 
   function pointerDown(e) {
     e.preventDefault()
-    const event = getEvent(e)
+    if (handleInfo || imgInfo) return
 
+    const event = getEvent(e)
     if (e.currTarget.matches('.handle')) {
       addClass(tabContainer, 'cropping')
       const dataPos = e.currTarget.getAttribute('data-pos')

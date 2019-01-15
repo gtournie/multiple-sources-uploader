@@ -39,10 +39,7 @@ export const mediaDevices = _mediaDevices
 
 // Get orientation of a given pic
 // https://stackoverflow.com/questions/7584794/accessing-jpeg-exif-rotation-data-in-javascript-on-the-client-side/32490603#32490603
-const iOs = !isNode && /iPad|iPhone|iPod/.test(navigator.platform)
-export function getOrientation(file, callback) {
-  if (iOs) return callback(0) // iOs always display images with correct orientation, no need to do it manually
-
+function getOrientation(file, callback) {
   const reader = new FileReader()
   reader.onerror = function(event) {
     reader.abort()
@@ -78,17 +75,51 @@ export function getOrientation(file, callback) {
   reader.readAsArrayBuffer(file.slice(0, 64 * 4 * 1024))
 }
 
-export function convertGif(file, callback, error) {
-  const img = new Image()
-  img.onerror = error
-  img.onload = () => {
-    URL.revokeObjectURL(file)
-    canvas.width = img.width
-    canvas.height = img.height
-    ctx.drawImage(img, 0, 0)
-    callback(canvas.toDataURL())
-  }
-  img.src = URL.createObjectURL(file)
+export function resetOrientation(file, callback, error) {
+  getOrientation(file, orientation => {
+    const img = new Image()
+    img.onerror = error
+    img.onload = () => {
+      URL.revokeObjectURL(file)
+      const width = img.width
+      const height = img.height
+      if (4 < orientation && orientation < 9) {
+        canvas.width = height
+        canvas.height = width
+      } else {
+        canvas.width = width
+        canvas.height = height
+      }
+      switch (orientation) {
+        case 2:
+          ctx.transform(-1, 0, 0, 1, width, 0)
+          break
+        case 3:
+          ctx.transform(-1, 0, 0, -1, width, height)
+          break
+        case 4:
+          ctx.transform(1, 0, 0, -1, 0, height)
+          break
+        case 5:
+          ctx.transform(0, 1, 1, 0, 0, 0)
+          break
+        case 6:
+          ctx.transform(0, 1, -1, 0, height, 0)
+          break
+        case 7:
+          ctx.transform(0, -1, -1, 0, height, width)
+          break
+        case 8:
+          ctx.transform(0, -1, 1, 0, 0, width)
+          break
+        default:
+          break
+      }
+      ctx.drawImage(img, 0, 0)
+      canvas.toBlob(callback, 'image/png')
+    }
+    img.src = URL.createObjectURL(file)
+  })
 }
 
 // Take a snapshot of the video stream
