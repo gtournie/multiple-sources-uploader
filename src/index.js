@@ -30,7 +30,7 @@ import {
 
 // EN by default
 let messages = en
-MSUploader.setMessages = m => {
+function setMessages(m) {
   messages = m
 }
 
@@ -387,5 +387,5 @@ function i18n(prop, values) {
   return msg
 }
 
-export { messages }
-module.exports = MSUploader
+MSUploader.setMessages = setMessages
+export { messages, setMessages }

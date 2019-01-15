@@ -1,12 +1,14 @@
+var path = require('path')
 var webpack = require('webpack')
 var MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 module.exports = {
-  entry: ['./src/index.js', './src/index.scss'],
+  entry: ['./src/index.scss', './src/index.js'], // css must be placed first
   output: {
     filename: 'ms-uploader.js',
     library: 'MSUploader',
     libraryTarget: 'umd',
+    libraryExport: 'default',
   },
   plugins: [new MiniCssExtractPlugin({ filename: 'ms-uploader.css' })],
   module: {
@@ -16,9 +18,6 @@ module.exports = {
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
-          query: {
-            presets: [['@babel/preset-env', { useBuiltIns: 'usage' }]],
-          },
         },
       },
       {

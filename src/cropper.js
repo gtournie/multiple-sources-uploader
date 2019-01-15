@@ -425,6 +425,8 @@ export default function Cropper(tabContainer, args) {
   }
 
   function wheelDown(e) {
+    e.preventDefault()
+
     const event = getEvent(e)
     wheelInfo = { scale: scale, dir: e.currTarget.getAttribute('data-dir') }
     mouseInfo = { x: event.clientX, y: event.clientY }

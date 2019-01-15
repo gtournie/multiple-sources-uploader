@@ -1,7 +1,7 @@
-@import './camera.scss';
-@import './cropper.scss';
 @import './local.scss';
+@import './camera.scss';
 @import './source.scss';
+@import './cropper.scss';
 
 @keyframes msu-loading {
   from {
@@ -63,6 +63,7 @@
   &,
   * {
     box-sizing: border-box;
+    -webkit-touch-callout: none;
   }
 
   .popup {

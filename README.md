@@ -38,7 +38,7 @@ Work on small and big screens :)
 ```
 import MSUploader from 'multiple-sources-uploader'
 
-new MSUploader(options)
+MSUploader(options)
 ```
 
 ### Options
@@ -109,7 +109,7 @@ new MSUploader(options)
 ### Example (with amazon s3 upload)
 
 ```javascript
-new MSUploader({
+MSUploader({
   uploader: {
     url: 'https://my-bucket.s3.amazonaws.com',
     getSignature: callback => {
