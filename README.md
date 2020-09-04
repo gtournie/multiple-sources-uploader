@@ -17,7 +17,7 @@ When I resized a 5.7Mb photo to 1000x1000, its final weight was only 56Ko (webp 
 Upload any photos from:
 
 - your computer
-- your webcam
+- your webcam/phone camera
 - Facebook
 - Google Photos
 - Instagram

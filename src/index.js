@@ -181,6 +181,7 @@ export default function MSUploader(options) {
   if (isNode) return
 
   options = options || {}
+  options.camera = options.camera === void 0 ? true : options.camera
 
   const cropperOptions = options.cropper || {}
   const ratio = cropperOptions.ratio
@@ -222,7 +223,11 @@ export default function MSUploader(options) {
   )
 
   // Display tabs or not
-  displayCameraTab(cameraType)
+  if (options.camera) {
+    displayCameraTab(cameraType)
+  } else {
+    remove(container.querySelector('[data-target=".camera-content"]'))
+  }
   each($$('.source-tab'), source => {
     if (!options[source.getAttribute('data-key')]) remove(source)
   })
@@ -262,6 +267,7 @@ export default function MSUploader(options) {
     upload,
     capture: 'capture' === cameraType,
     onSelect,
+    back: backToPreviousTab,
     flash,
     i18n: i18n,
     options,

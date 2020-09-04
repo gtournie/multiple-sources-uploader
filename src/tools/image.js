@@ -3,16 +3,19 @@ import downsize from './pica'
 
 let canvas, ctx, _webPSupport, _webcamSupport, _mediaDevices
 
+export function dataURItoBlob(dataURL) {
+  const binStr = atob(dataURL)
+  const len = binStr.length
+  const arr = new Uint8Array(len)
+  for (let i = 0; i < len; ++i) arr[i] = binStr.charCodeAt(i)
+  return new Blob([arr], { type: type || 'image/png' })
+}
+
 if (!isNode) {
   if (!HTMLCanvasElement.prototype.toBlob) {
     HTMLCanvasElement.prototype.toBlob = function(callback, type, quality) {
-      const dataURL = this.toDataURL(type, quality).split(',')[1]
-      setTimeout(function() {
-        const binStr = atob(dataURL)
-        const len = binStr.length
-        const arr = new Uint8Array(len)
-        for (let i = 0; i < len; ++i) arr[i] = binStr.charCodeAt(i)
-        callback(new Blob([arr], { type: type || 'image/png' }))
+      setTimeout(() => {
+        callback(dataURItoBlob(this.toDataURL(type, quality).split(',')[1]))
       })
     }
   }

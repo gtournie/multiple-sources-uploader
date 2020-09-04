@@ -10,10 +10,12 @@ MSUploader({
     onDone: xhr => {},
     onError: () => {},
   },
-  cropper: {
-    ratio: { v: 1, h: 1 },
-    minWidth: 480,
-    resizeToWidth: 1000,
-    webpIfSupported: true,
-  },
+  camera: null,
+  cropper: null,
+  // cropper: {
+  //   ratio: { v: 1, h: 1 },
+  //   minWidth: 480,
+  //   resizeToWidth: 1000,
+  //   webpIfSupported: true,
+  // },
 })

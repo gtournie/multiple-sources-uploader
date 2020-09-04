@@ -26,12 +26,12 @@ if (!isNode) {
 export const addHTML = _addHTML
 
 export function hide(elt) {
-  elt.style.display = 'none'
+  if (elt) elt.style.display = 'none'
   return elt
 }
 
 export function show(elt) {
-  elt.style.display = ''
+  if (elt) elt.style.display = ''
   return elt
 }
 

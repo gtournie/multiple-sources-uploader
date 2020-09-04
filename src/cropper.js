@@ -1,6 +1,6 @@
 import { getQueryFunc, getQueryAllFunc, getLoadingFunc, stopObserving } from './tools/tab'
 import { on, show, hide, addClass, removeClass } from './tools/dom'
-import { transformPic, newSize, resetOrientation } from './tools/image'
+import { transformPic, newSize, resetOrientation, dataURItoBlob } from './tools/image'
 import { position, transform, applyRatio } from './tools/position'
 import { each } from './tools/tools'
 
@@ -37,9 +37,9 @@ function pointInRectangle(ax, ay, bx, by, cx, cy, px, py) {
 export default function Cropper(tabContainer, args) {
   const minWidth = args.minWidth
   const minHeight = args.minHeight
+  const previewOnly = !args.options.cropper
   const options = args.options.cropper || {}
   const flash = args.flash
-  const iOs = /iPad|iPhone|iPod/.test(navigator.platform)
 
   const $ = getQueryFunc(tabContainer)
   const $$ = getQueryAllFunc(tabContainer)
@@ -121,7 +121,11 @@ export default function Cropper(tabContainer, args) {
         { passive: false },
       ),
       on(tabContainer, 'click', '.back', () => {
-        removeClass(tabContainer, 'preview-mode')
+        if (previewOnly) {
+          args.back()
+        } else {
+          removeClass(tabContainer, 'preview-mode')
+        }
       }),
       on(tabContainer, 'click', '.upload', () => {
         args.upload(uploadBlob)
@@ -158,22 +162,29 @@ export default function Cropper(tabContainer, args) {
   function onEnter(dataURI, r, f) {
     params = [r, f]
     loading()
+    if (previewOnly) addClass(tabContainer, 'preview-mode')
+
     if (viewportmeta) {
       metaSave = viewportmeta.content
       if (metaSave.indexOf('maximum-scale') < 0) viewportmeta.content += ',maximum-scale=1.0'
     }
     init()
+
+    const destination = previewOnly ? preview : img
     if ('string' !== typeof dataURI) {
       if (dataURI instanceof File) {
         return resetOrientation(dataURI, b => {
           blob = b
-          img.src = URL.createObjectURL(blob)
+          destination.src = URL.createObjectURL(blob)
         })
       }
       blob = dataURI
       dataURI = URL.createObjectURL(blob)
+      if (previewOnly) uploadBlob = blob
+    } else if (previewOnly) {
+      uploadBlob = dataURItoBlob(dataURI)
     }
-    img.src = dataURI
+    destination.src = dataURI
   }
 
   function init() {
